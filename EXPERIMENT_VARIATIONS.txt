@@ -1,0 +1,75 @@
+================================================================================
+  PNEUMONIA DETECTION USING CHEST X-RAYS — EXPERIMENT VARIATIONS LOG
+  Project : Pneuminia_Detection_Using_Chest_XRays_Project
+  Author  : vedantmagarde
+================================================================================
+
+  Over 30 experiments were performed across different preprocessing strategies,
+  model architectures, input sizes, augmentation levels, and training configs.
+  The most effective and notable experiments are listed below.
+
+================================================================================
+  CONFIG KEY
+================================================================================
+
+  P  — Preprocessing   : P1 = Normalization | P2 = CLAHE | P4 = CLAHE + Contrast
+  I  — Input Size      : I1 = 150×150 Gray  | I2 = 224×224 Gray | I3 = 224×224 RGB
+  A  — Augmentation    : A1 = None | A2 = Light | A3 = Medium
+  M  — Model           : M2 = Improved CNN | M3 = MobileNetV2 | M5 = DenseNet121
+                         M6 = ResNet50 | M7 = Xception
+  T  — Training        : T1 = Default | T2 = Class Weights | T3 = Fine-tune Head
+                         T4 = Partial Unfreeze
+
+================================================================================
+  SELECTED EXPERIMENTS
+================================================================================
+
+  E4  | P1 · I1 · A2 · M2 · T1
+        Normalization · 150×150 Gray · Light Aug · Improved CNN · Default Train
+        File : E4_ImprovedCNN_P1I1A2M2T1.ipynb
+
+  E5  | P1 · I1 · A3 · M2 · T2
+        Normalization · 150×150 Gray · Medium Aug · Improved CNN · Class Weights
+        File : E5_ImprovedCNN_P1I1A3M2T2.ipynb
+
+  E7  | P4 · I1 · A2 · M2 · T2
+        CLAHE+Contrast · 150×150 Gray · Light Aug · Improved CNN · Class Weights
+        File : E7_CLAHE_Contrast_ImprovedCNN_P4I1A2M2T2.ipynb
+
+  E8  | P4 · I2 · A2 · M2 · T2
+        CLAHE+Contrast · 224×224 Gray · Light Aug · Improved CNN · Class Weights
+        File : E8_CLAHE_Contrast_224Gray_ImprovedCNN_P4I2A2M2T2.ipynb
+
+  E9  | P1 · I3 · A2 · M3 · T3
+        Normalization · 224×224 RGB · Light Aug · MobileNetV2 · Fine-tune Head
+        File : E9_MobileNetV2_P1I3A2M3T3.ipynb
+
+  E10 | P2 · I3 · A2 · M3 · T3
+        CLAHE · 224×224 RGB · Light Aug · MobileNetV2 · Fine-tune Head
+        File : E10_CLAHE_MobileNetV2_P2I3A2M3T3.ipynb
+
+  E20 | P4 · I3 · A2 · M6 · T4
+        CLAHE+Contrast · 224×224 RGB · Light Aug · ResNet50 · Partial Unfreeze
+        File : E20_CLAHE_Contrast_ResNet50_P4I3A2M6T4.ipynb
+
+  E21 | P1 · I3 · A2 · M7 · T3
+        Normalization · 224×224 RGB · Light Aug · Xception · Fine-tune Head
+        File : E21_Xception_P1I3A2M7T3.ipynb
+
+  E23 | P4 · I3 · A2 · M7 · T4
+        CLAHE+Contrast · 224×224 RGB · Light Aug · Xception · Partial Unfreeze
+        File : E23_CLAHE_Contrast_Xception_P4I3A2M7T4.ipynb
+
+  E25 | P4 · I3 · A3 · M5 · T4
+        CLAHE+Contrast · 224×224 RGB · Medium Aug · DenseNet121 · Partial Unfreeze
+        File : E25_CLAHE_Contrast_DenseNet121_P4I3A3M5T4.ipynb
+
+  E26 | P4 · I3 · A3 · M6 · T4
+        CLAHE+Contrast · 224×224 RGB · Medium Aug · ResNet50 · Partial Unfreeze
+        File : E26_CLAHE_Contrast_ResNet50_P4I3A3M6T4.ipynb
+
+  E27 | P4 · I3 · A3 · M7 · T4
+        CLAHE+Contrast · 224×224 RGB · Medium Aug · Xception · Partial Unfreeze
+        File : E27_CLAHE_Contrast_Xception_P4I3A3M7T4.ipynb
+
+================================================================================

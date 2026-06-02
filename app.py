@@ -1406,3 +1406,196 @@ with gr.Blocks() as demo:
                         csv_download = gr.File(label="📊 Download CSV Cohort Diagnostics", visible=False)
                         html_download = gr.File(label="🌐 Download HTML Cohort Report", visible=False)
                         pdf_download = gr.File(label="📑 Download PDF Cohort Report", visible=False)
+
+
+
+
+
+
+    # 7. Helper Functions and Event Bindings
+    def check_selected_models(selected):
+        """Enforce maximum limit of 4 models."""
+        if len(selected) > 4:
+            truncated = selected[:4]
+            warning = "<div style='color:#be123c; background-color:#ffe4e6; border:1px solid #fecdd3; padding:12px 16px; border-radius:8px; font-weight:600; font-size:14px; display:flex; align-items:center; gap:8px; margin-top:10px;'><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"></path><line x1=\"12\" y1=\"9\" x2=\"12\" y2=\"13\"></line><line x1=\"12\" y1=\"17\" x2=\"12.01\" y2=\"17\"></line></svg> Maximum of 4 models allowed. Selection was reverted.</div>"
+            return gr.update(value=truncated), gr.update(value=warning, visible=True)
+        return gr.update(), gr.update(value="", visible=False)
+
+    models_grid.change(check_selected_models, inputs=[models_grid], outputs=[models_grid, warning_markdown])
+
+    def add_from_upload(files, current):
+        if files is None:
+            return current, [[p, os.path.basename(p)] for p in current]
+        for f in files:
+            if f.name not in current:
+                if len(current) >= 30:
+                    raise gr.Error("Maximum of 30 images allowed in the queue.")
+                current.append(f.name)
+        return current, [[p, os.path.basename(p)] for p in current]
+
+    def add_from_gallery(select_data: gr.SelectData, current):
+        img_path = select_data.value["image"]["path"]
+        if img_path not in current:
+            if len(current) >= 30:
+                raise gr.Error("Maximum of 30 images allowed in the queue.")
+            current.append(img_path)
+        return current, [[p, os.path.basename(p)] for p in current]
+
+    def clear_queue():
+        return [], []
+
+    # Event bindings for image queue management
+    uploader.change(add_from_upload, inputs=[uploader, active_selection], outputs=[active_selection, selected_gallery])
+    gallery.select(add_from_gallery, inputs=[active_selection], outputs=[active_selection, selected_gallery])
+    clear_btn.click(clear_queue, outputs=[active_selection, selected_gallery])
+
+    # Process selected images through models
+    def calculate_ensemble_predictions(images, selected_models, progress=gr.Progress()):
+        if not selected_models:
+            raise gr.Error("Please select at least one model in Section 1.")
+        if len(selected_models) > 4:
+            raise gr.Error("Maximum 4 models can be selected.")
+        if not images:
+            raise gr.Error("Please upload or select at least one image.")
+            
+        progress(0, desc="Initializing calculations...")
+        results = []
+        
+        for idx, img_path in enumerate(images):
+            basename = os.path.basename(img_path)
+            progress((idx + 0.1) / len(images), desc=f"Analyzing {basename}...")
+            
+            img_results = run_ensemble(img_path, selected_models)
+            results.append({
+                "path": img_path,
+                "name": basename,
+                "results": img_results
+            })
+            
+        progress(0.9, desc="Compiling charts and reports...")
+        
+        # Generate export reports
+        csv_path = generate_csv_report(results, selected_models)
+        html_path = generate_html_report(results, selected_models)
+        pdf_path = generate_cohort_pdf_report(results, selected_models)
+        
+        # Read HTML report for UI preview
+        with open(html_path, "r", encoding="utf-8") as f:
+            html_report_code = f.read()
+        
+        # Populate image selector choices
+        choices = [r["name"] for r in results]
+        
+        return (
+            gr.update(selected=0),                                # Switch tab
+            results,                                              # Prediction state
+            gr.update(choices=choices, value=choices[0]),         # Image dropdown
+            gr.update(visible=True, value=csv_path),              # CSV report path
+            gr.update(visible=True, value=html_path),             # HTML report path
+            gr.update(visible=True, value=pdf_path),              # PDF report path
+            gr.update(value=html_report_code),                    # Preview HTML
+            gr.update(visible=False),                             # Hide upload view
+            gr.update(visible=True)                               # Show results view
+        )
+
+    calc_btn.click(
+        calculate_ensemble_predictions,
+        inputs=[active_selection, models_grid],
+        outputs=[main_tabs, prediction_state, image_selector, csv_download, html_download, pdf_download, report_display_html, page_upload, page_results],
+        scroll_to_output=False
+    )
+    
+    # Routing for back button
+    back_btn.click(
+        lambda: (gr.update(visible=True), gr.update(visible=False)),
+        inputs=[],
+        outputs=[page_upload, page_results]
+    )
+
+    def inspect_patient_detail(selected_name, results_list):
+        if not selected_name or not results_list:
+            return None, pd.DataFrame(), gr.update(visible=False), "", "", None
+            
+        # Search selected image in results
+        p_data = None
+        for r in results_list:
+            if r["name"] == selected_name:
+                p_data = r
+                break
+                
+        if p_data is None:
+            return None, pd.DataFrame(), gr.update(visible=False), "", "", None
+            
+        img_path = p_data["path"]
+        results = p_data["results"]
+        
+        # Generate model confidence chart
+        bar_chart = make_bar_chart(selected_name, results)
+        
+        # Render individual model prediction cards
+        model_items = [(m, res) for m, res in results.items() if m != "Ensemble"]
+        if len(model_items) % 2 != 0:
+            # Add empty element for layout balancing
+            model_items.append(None)
+
+        individual_html = "<div style='display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;'>"
+        for item in model_items:
+            if item is None:
+                individual_html += "<div style='visibility:hidden;'></div>"
+                continue
+            m, res = item
+            bg_color = "#fbf6ee" if res["class"] == "NORMAL" else "#fef2f2"
+            border_color = "#eadbc8" if res["class"] == "NORMAL" else "#fecdd3"
+            text_color = "#71a0a5" if res["class"] == "NORMAL" else "#ba4343"
+            badge_icon = "✅" if res["class"] == "NORMAL" else "⚠️"
+            
+            individual_html += f"""
+            <div style='background-color:{bg_color}; border: 1px solid {border_color}; padding:14px; border-radius:8px; display:flex; flex-direction:column; justify-content:space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.02);'>
+                <span style='color:#1e293b; font-size:12px; font-weight:800; text-transform:uppercase;'>{m}</span>
+                <div style='display:flex; align-items:center; justify-content:space-between; margin-top:8px;'>
+                    <span style='color:{text_color}; font-weight:bold; font-size:16px;'>{badge_icon} {res['class']}</span>
+                    <span style='color:{text_color}; font-weight:bold; font-size:15px;'>{res['confidence']:.2f}%</span>
+                </div>
+            </div>
+            """
+        individual_html += "</div>"
+        
+        # Render consensus prediction card
+        ens_class = results["Ensemble"]["class"]
+        ens_conf = results["Ensemble"]["confidence"]
+        ens_bg = "#fbf6ee" if ens_class == "NORMAL" else "#fef2f2"
+        ens_border = "#eadbc8" if ens_class == "NORMAL" else "#fecdd3"
+        ens_text = "#71a0a5" if ens_class == "NORMAL" else "#ba4343"
+        ens_icon = "🛡️ CONSENSUS: NORMAL" if ens_class == "NORMAL" else "🚨 CONSENSUS: PNEUMONIA"
+        
+        ensemble_html = f"""
+        <div style='background-color:{ens_bg}; border: 2px solid {ens_border}; padding:20px; border-radius:12px; text-align:center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);'>
+            <p style='color:#1e293b; font-size:13px; font-weight:800; text-transform:uppercase; margin:0;'>Ensemble Vote Decision</p>
+            <h1 style='color:{ens_text}; margin:12px 0; font-size:2.2rem; font-weight:800;'>{ens_icon}</h1>
+            <p style='color:#475569; font-size:16px; margin:0;'>Confidence Level: <strong style='color:{ens_text}; font-size:18px;'>{ens_conf:.2f}%</strong></p>
+        </div>
+        """
+        
+        # Construct full metrics DataFrame
+        all_rows = []
+        for r in results_list:
+            row_data = {"Image": r["name"]}
+            for m, r_res in r["results"].items():
+                if m == "Ensemble": continue
+                row_data[m] = f"{r_res['class']} ({r_res['confidence']:.1f}%)"
+            row_data["Ensemble"] = f"{r['results']['Ensemble']['class']} ({r['results']['Ensemble']['confidence']:.1f}%)"
+            all_rows.append(row_data)
+        df_full = pd.DataFrame(all_rows)
+        
+        pdf_report_path = generate_single_patient_pdf(p_data, bar_chart)
+        
+        return img_path, df_full, gr.update(value=pdf_report_path, visible=True), individual_html, ensemble_html, bar_chart
+
+    image_selector.change(
+        inspect_patient_detail,
+        inputs=[image_selector, prediction_state],
+        outputs=[inspect_image, patient_matrix, patient_pdf_download, individual_results_html, ensemble_result_html, bar_chart_display]
+    )
+
+if __name__ == "__main__":
+    demo.launch(debug=True, theme=gr.themes.Default(), css=css)

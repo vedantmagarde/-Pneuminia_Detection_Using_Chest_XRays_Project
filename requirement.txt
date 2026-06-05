@@ -1,0 +1,8 @@
+gradio
+tensorflow
+opencv-python-headless
+numpy<2.0
+pandas
+Pillow
+matplotlib
+h5py

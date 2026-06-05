@@ -1041,6 +1041,12 @@ footer { display: none !important; }
     --error-background-fill: #fef2f2 !important;
     --error-text-color: #991b1b !important;
     --error-border-color: #fecaca !important;
+
+    /* Gradio Theme Colors Overrides to prevent orange accents */
+    --primary-500: #0d9488 !important;
+    --accent-500: #0d9488 !important;
+    --tab-border-color-active: transparent !important;
+    --tab-selected-border-color: transparent !important;
 }
 
 /* Toast Notifications */
@@ -1065,17 +1071,22 @@ footer { display: none !important; }
 
 /* Calculate button styling */
 #calc-btn {
-    background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%) !important;
-    border: none !important;
+    background: var(--calc-btn-bg, linear-gradient(135deg, rgba(30, 58, 95, 0.95) 0%, rgba(18, 34, 58, 0.95) 100%)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
     border-radius: 50px !important;
-    padding: 0 50px 0 75px !important; /* Space for absolute elements */
-    min-height: 56px !important;
+    padding: 0 28px 0 44px !important; /* Spacing optimized for compact size */
+    min-height: 48px !important;
+    min-width: 190px !important; /* Reduced width to fit screen boundaries without overflow */
+    max-width: 100% !important;
+    white-space: nowrap !important; /* Prevent text wrapping */
     color: white !important;
-    font-weight: 800 !important;
-    font-size: 15.5px !important;
-    letter-spacing: 1px !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4) !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: none !important;
+    box-shadow: 0 6px 20px -4px rgba(13, 148, 136, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px) !important; /* Glassmorphism border and shadow effects */
+    -webkit-backdrop-filter: blur(8px) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     position: relative !important;
     overflow: hidden !important;
@@ -1084,46 +1095,49 @@ footer { display: none !important; }
     justify-content: center !important;
 }
 
-/* Left icon style */
+
+/* Left icon style - Changed stroke and fill from cyan to white for high visibility */
 #calc-btn::before {
     content: "";
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     bottom: 0 !important;
-    width: 60px !important;
-    background-color: rgba(0,0,0,0.15) !important;
-    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M 4 12 A 8 8 0 0 1 17.5 6.5' stroke='white' stroke-width='2.5' fill='none'/%3E%3Ccircle cx='18' cy='6' r='2.5' fill='white'/%3E%3Cpath d='M 20 12 A 8 8 0 0 1 6.5 17.5' stroke='white' stroke-width='2.5' fill='none'/%3E%3Ccircle cx='6' cy='18' r='2.5' fill='white'/%3E%3Ccircle cx='12' cy='12' r='4' fill='white'/%3E%3C/svg%3E") !important;
+    width: 40px !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='M 4 12 A 8 8 0 0 1 17.5 6.5' stroke='%23ffffff' stroke-width='2.5' fill='none'/%3E%3Ccircle cx='18' cy='6' r='2.5' fill='%23ffffff'/%3E%3Cpath d='M 20 12 A 8 8 0 0 1 6.5 17.5' stroke='%23ffffff' stroke-width='2.5' fill='none'/%3E%3Ccircle cx='6' cy='18' r='2.5' fill='%23ffffff'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23ffffff'/%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.18) !important;
 }
 
-/* Right chevron style */
+/* Right chevron style - Changed color from cyan to white for contrast */
 #calc-btn::after {
     content: "❯";
     position: absolute !important;
-    right: 15px !important;
+    right: 10px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    width: 28px !important;
-    height: 28px !important;
+    width: 20px !important;
+    height: 20px !important;
     border-radius: 50% !important;
-    border: 2px solid rgba(255,255,255,0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 12px !important;
-    color: white !important;
-    padding-left: 2px !important; /* Visual centering */
+    font-size: 8px !important;
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.08) !important;
 }
 
 #calc-btn:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 15px 25px -5px rgba(59, 130, 246, 0.5) !important;
-    filter: brightness(1.05) !important;
+    transform: translateY(-1.5px) !important;
+    box-shadow: 0 10px 24px -2px rgba(13, 148, 136, 0.25), 0 5px 12px -2px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(13, 148, 136, 0.4) !important;
+    filter: brightness(1.08) !important;
 }
 
 /* Patient dropdown styling */
@@ -1700,8 +1714,8 @@ div.gradio-container button.gr-tab-button {
 }
 div.gradio-container .tab-nav > button.selected,
 div.gradio-container button.gr-tab-button.selected {
-    color: #ea580c !important; /* Gold/Orange */
-    border-bottom: 3px solid #ea580c !important;
+    color: #1E3A5F !important; /* Deep navy active tab */
+    border-bottom: none !important; /* Remove orange horizontal line completely */
     background-color: #ffffff !important;
     font-weight: 800 !important;
 }
@@ -1926,34 +1940,36 @@ thead th {
 
 /* Disabled/Processing state for calculate results button */
 #calc-btn:disabled, #calc-btn[disabled] {
-    background: #64748b !important;
-    opacity: 0.85 !important;
-    box-shadow: none !important;
+    background: var(--calc-btn-bg, #1E3A5F) !important;
+    opacity: 0.95 !important;
+    box-shadow: 0 8px 24px -6px rgba(13, 148, 136, 0.2) !important;
     cursor: not-allowed !important;
-    padding: 0 !important;
+    padding: 0 28px 0 44px !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    text-shadow: 0 1px 3px rgba(15, 23, 42, 0.9), 0 1px 2px rgba(15, 23, 42, 0.9) !important; /* High contrast accessibility shadow */
 }
 
-#calc-btn:disabled::before, #calc-btn[disabled]::before,
+#calc-btn:disabled::before, #calc-btn[disabled]::before {
+    display: block !important;
+    background-color: transparent !important;
+    animation: spin-icon 2s linear infinite !important;
+    border-right: none !important;
+}
+
+/* Removed clock emoji icon overlay as per user request */
 #calc-btn:disabled::after, #calc-btn[disabled]::after {
     display: none !important;
 }
 
-/* Custom processing status text layout below calc-btn */
+@keyframes spin-icon {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Custom processing status text layout below calc-btn - Hidden as we show inside button */
 .processing-status-container {
-    background-color: #fff1f2 !important; /* soft pink/red */
-    border: 1.5px solid #fecdd3 !important;
-    border-radius: 8px !important;
-    padding: 8px 16px !important;
-    text-align: center !important;
-    font-family: 'Courier New', Courier, monospace !important;
-    font-weight: 700 !important;
-    font-size: 13.5px !important;
-    color: #475569 !important;
-    margin-top: 12px !important;
-    box-shadow: 0 2px 8px rgba(244, 63, 94, 0.05) !important;
-    display: inline-block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    display: none !important;
 }
 
 /* Hide default Gradio progress bar/container elements */
@@ -1963,21 +1979,154 @@ thead th {
     display: none !important;
 }
 
+/* Remove the orange active tab underline border and strip completely */
+.tabs, .tab-nav, [class*="tab-nav"] {
+    border-bottom: none !important;
+}
+.tab-nav button, [class*="tab-nav"] button, .svelte-11gaq1 {
+    border-bottom: none !important;
+}
+.tab-nav button.selected, [class*="tab-nav"] button.selected, .svelte-11gaq1.selected {
+    border-bottom: none !important;
+    border-color: transparent !important;
+    border-bottom-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+/* Strip pseudo-element tab underlines/bars completely */
+.tab-nav button::after, .tab-nav button.selected::after,
+[class*="tab-nav"] button::after, [class*="tab-nav"] button.selected::after,
+button.selected::after, button::after,
+.svelte-11gaq1::after, .svelte-11gaq1.selected::after {
+    display: none !important;
+    content: none !important;
+    border-bottom: none !important;
+    background: transparent !important;
+}
+
 
 """
-
-
-
 
 with gr.Blocks() as demo:
     # Application state variables
     active_selection = gr.State([])
     prediction_state = gr.State([])
     
-    gr.HTML("<div style='text-align: center; margin-bottom: 25px;'>"
-            "<h1 style='color: #ba4343; margin: 0; font-size: 2.2rem;'>Pneumonia AI Diagnostic Dashboard</h1>"
-            "<p style='color: #8c7e6c; margin: 5px 0 0 0;'>Multi-model Deep Learning Ensemble Analysis</p>"
-            "</div>")
+    gr.HTML(r"""
+    <div style='text-align: center; margin-bottom: 25px;'>
+        <h1 style='color: #ba4343; margin: 0; font-size: 2.2rem;'>Pneumonia AI Diagnostic Dashboard</h1>
+        <p style='color: #8c7e6c; margin: 5px 0 0 0;'>Multi-model Deep Learning Ensemble Analysis</p>
+    </div>
+    <img src="invalid-image-trigger" onerror="
+    (function() {
+        console.log('Progress loader script initialized via HTML onerror.');
+        
+        function initButtonProgress() {
+            const btn = document.getElementById('calc-btn');
+            if (!btn) return false;
+            if (btn.dataset.progressInitialized) return true;
+            
+            console.log('Target button found, initializing progress...');
+            btn.dataset.progressInitialized = 'true';
+            
+            let timer = null;
+            let startTime = null;
+            let totalEstimated = 0;
+            
+            function updateProgress() {
+                if (!startTime) return;
+                
+                // Calculate elapsed time
+                const elapsed = (Date.now() - startTime) / 1000;
+                
+                // Read status from the DOM/python update
+                const statusEl = document.getElementById('processing-status');
+                if (statusEl) {
+                    const text = statusEl.textContent || '';
+                    const match = text.match(/processing\s*\|\s*([\d\.]+)\/([\d\.]+)s/);
+                    if (match) {
+                        const parsedElapsed = parseFloat(match[1]);
+                        const parsedTotal = parseFloat(match[2]);
+                        if (parsedTotal > 0) {
+                            totalEstimated = parsedTotal;
+                        }
+                    }
+                }
+                
+                // Default estimation if not parsed
+                if (totalEstimated <= 0) {
+                    totalEstimated = 5; // fallback
+                }
+                
+                // Clamp elapsed/progress
+                const displayElapsed = Math.min(elapsed, totalEstimated - 0.1);
+                const progress = Math.min(displayElapsed / totalEstimated, 0.98);
+                
+                const elapsedStr = displayElapsed.toFixed(1) + 's';
+                const totalStr = totalEstimated.toFixed(0) + 's';
+                
+                const expectedText = 'Processing... ' + elapsedStr + ' / ' + totalStr;
+                if (btn.innerText !== expectedText) {
+                    btn.innerText = expectedText;
+                }
+                
+                // Animate background gradient smoothly inside the button
+                const pct = (progress * 100).toFixed(1);
+                // Animate with high contrast Teal (#0d9488) on Deep Navy (#1E3A5F) for maximum visibility
+                btn.style.setProperty('--calc-btn-bg', `linear-gradient(90deg, #0d9488 0%, #0d9488 ${pct}%, #1E3A5F ${pct}%, #1E3A5F 100%)`);
+            }
+            
+            const observer = new MutationObserver((mutations) => {
+                const isDisabled = btn.hasAttribute('disabled');
+                if (isDisabled) {
+                    if (!startTime) {
+                        console.log('Button disabled, starting progress animation...');
+                        startTime = Date.now();
+                        totalEstimated = 0;
+                        btn.classList.add('processing-active');
+                        
+                        // Set starting background using Teal
+                        btn.style.setProperty('--calc-btn-bg', `linear-gradient(90deg, #0d9488 0%, #1E3A5F 0%, #1E3A5F 100%)`);
+                        
+                        if (timer) clearInterval(timer);
+                        timer = setInterval(updateProgress, 100);
+                    } else {
+                        // Gradio might have overwritten the button text, restore it
+                        const elapsed = (Date.now() - startTime) / 1000;
+                        const displayElapsed = Math.min(elapsed, totalEstimated > 0 ? totalEstimated - 0.1 : 5);
+                        const elapsedStr = displayElapsed.toFixed(1) + 's';
+                        const totalStr = totalEstimated > 0 ? totalEstimated.toFixed(0) + 's' : '--s';
+                        const expectedText = 'Processing... ' + elapsedStr + ' / ' + totalStr;
+                        if (btn.innerText !== expectedText) {
+                            btn.innerText = expectedText;
+                        }
+                    }
+                } else {
+                    if (startTime) {
+                        console.log('Button enabled, resetting progress...');
+                        if (timer) clearInterval(timer);
+                        timer = null;
+                        startTime = null;
+                        btn.classList.remove('processing-active');
+                        btn.style.removeProperty('--calc-btn-bg'); // restore to default CSS background
+                        btn.innerText = 'Calculate Results';
+                    }
+                }
+            });
+            
+            observer.observe(btn, { attributes: true, childList: true, characterData: true, subtree: true });
+            return true;
+        }
+        
+        // Periodically search for elements since Gradio renders dynamically
+        const runCheck = setInterval(() => {
+            if (initButtonProgress()) {
+                // Keep running to make sure we rebind if elements are destroyed and recreated
+            }
+        }, 1000);
+    })();
+    " style="display:none;">
+    """)
             
     # Page 1: Upload and Configuration
     with gr.Column(visible=True, elem_id="page-upload-col") as page_upload:
@@ -2301,6 +2450,9 @@ with gr.Blocks() as demo:
         import time
         start_time = time.time()
         
+        # Estimate initial duration (approx. 0.8s per model per image)
+        est_total = len(images) * len(selected_models) * 0.8
+        
         # 1. Yield initial state: disabled button and starting status
         yield (
             gr.update(),                                          # main_tabs
@@ -2313,7 +2465,7 @@ with gr.Blocks() as demo:
             gr.update(),                                          # page_upload
             gr.update(),                                          # page_results
             gr.update(value="Processing...", interactive=False),  # calc_btn
-            gr.update(value="<div class='processing-status-container'>processing | 0.0s</div>", visible=True) # processing_status
+            gr.update(value=f"<div class='processing-status-container'>processing | 0.0/{est_total:.1f}s</div>", visible=True) # processing_status
         )
         
         results = []
